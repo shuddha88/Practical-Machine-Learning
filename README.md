@@ -4,8 +4,10 @@ Background:
 Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
 
 Data Location:
+
 The training data for this project are available here:
 https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
 The test data are available here:
 https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 
@@ -48,6 +50,7 @@ validation = base[-inTrain,]
 
 Data  Cleaning:
 The excel file had text fields like “#DIV0!” which would be meaningless in terms of predicting the “Classe” variable. Hence, such values were replaced by missing values. Thereafter, variables with limited information were removed – namely, ones with more than 90% missing, and the ones with near zero variance. Some variables like Serial Number, Name and Timestamp were also removed since they would not make a meaningful prediction of “classe”.
+
 #Replace #DIV0! by blank/missing
 
 varnames <- c("kurtosis_picth_belt", "kurtosis_yaw_belt", "skewness_roll_belt", "skewness_roll_belt.1", "skewness_yaw_belt", 
@@ -85,12 +88,15 @@ validation <- validation[, -lowVariance]
 
 #Compare Different Models:
 Three different prediction techniques were used to compare the results on validation in order to choose the most accurate one. Here we have tried Random Forest, Gradient Boosting Machines and Linear Discriminant Analysis.
+
 Random Forest:
+
 modelFit.rf <- train(classe~.,method="rf",data=training)
 ValidPred.rf <- predict(modelFit.rf,validation)
 confusionMatrix(validation$classe,ValidPred.rf)
 
 Confusion Matrix and Statistics
+
 Prediction	A	      B	      C	      D	      E
 A	          2,231	  -	      -	      -	      1
 B	          2	      1,511	  4	      1	      -
@@ -122,7 +128,9 @@ Gradient Boosting Machines:
 modelFit.gbm <- train(classe~.,method="gbm",data=training)
 ValidPred.gbm <- predict(modelFit.gbm,validation)
 confusionMatrix(validation$classe,ValidPred.gbm)
+
 Confusion Matrix and Statistics
+
 Prediction 	A	      B	      C	      D	      E
  A 	        2,221	  11	    -	      -	      -
  B 	        18	    1,481	  15	    4	      -
@@ -151,6 +159,7 @@ Detection Prevalence	0.2845	0.1935	0.1744	0.1639	0.1838
 Balanced Accuracy	    0.995	0.9842	  0.9847	0.9898	0.9987
            
 Linear Discriminant Analysis:
+
 modelFit.lda <- train(classe ~ .,method="lda",data=training,preProcess=c("center","scale"))
 ValidPred.lda <- predict(modelFit.lda,validation)
 confusionMatrix(validation$classe,ValidPred.lda)
@@ -186,12 +195,20 @@ Balanced Accuracy	    0.8595	0.804	  0.7611	0.7938	0.8898
 
 
 Final Prediction Used:
+
 Random Forest and GBM both showed good accuracy. However, Random Forest had a better accuracy. Also, the balanced accuracy was >99% for all the classes in Random Forest. With an accuracy of 99.68%, this model should predict the “classe” correctly almost all the times (~299 out of 300 times)
+
 Result on Test Data:
-The Random Forest model was used to predict the 20 test cases in the test dataset since it was the most accurate model among the three that were tried out. Below are the results:
+
+The Random Forest model was used to predict the 20 test cases in the test dataset since it was the most accurate model among the three 
+that were tried out. Below are the results:
+
 Test.rf <- predict(modelFit.rf,test)
+
 Test.rf
+
 Output:
+
 [1] B A B A A E D B A A B C B A E E A B B B
 Levels: A B C D E
 
